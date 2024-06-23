@@ -114,15 +114,43 @@ where
 
     /// Delete a key value pair 
     /// 
-    /// If the key is found, reset the values to defaults
+    /// If the key is found, reset the values to defaults. 
+    /// Compresses the `HashTable` if:
+    /// - The total length is more than 50 and
+    /// - Only 33% of the `HashTable` is occupied 
     pub fn delete(&mut self, key: Key) {
         let index = self.find_slot(&key);
 
+        // Delete value if taken 
         if self.buckets[index].taken{
             self.buckets[index].taken = false;
             self.buckets[index].key = Default::default();
             self.buckets[index].value = Default::default();
+            self.taken_count -= 1; 
         }
+
+        // Check if we need to compress the table. 
+        if self.table_length > 50 && self.taken_count * 3 < self.table_length {
+            self.compress();
+        }
+    }
+
+    /// Function for compressing the table into half its length 
+    /// 
+    /// Creates a new `HashTable` and populate it with all the key value pairs in the buckets. 
+    fn compress(&mut self){
+        let new_size = self.table_length / 2; 
+        let mut new_table: HashTable<Key, Value> = HashTable::with_capacity(new_size);
+
+        // Iterate over all keys in the table and insert one by one
+        for entry in &self.buckets{
+            if entry.taken{
+                new_table.insert(entry.key.clone(), entry.value.clone());
+            }
+        }
+
+        *self = new_table;
+
     }
 
     /// Print function that prints the content of the function 
