@@ -2,6 +2,10 @@ use std::fmt::Debug;
 
 use crate::{hash_table_entry::Entry, hash_trait::Hash};
 
+
+/// HashTable data structure. 
+/// 
+/// Read more about how this data structure is implemented in the [README](readme.md)
 pub struct HashTable<Key, Value> {
     buckets: Vec<Entry<Key, Value>>,
     taken_count: usize,
@@ -10,9 +14,12 @@ pub struct HashTable<Key, Value> {
 
 impl<Key, Value> HashTable<Key, Value>
 where
-    Key: Default + Hash + PartialEq + Debug,
-    Value: Default + Debug,
+    Key: Default + Hash + PartialEq + Debug + Clone,
+    Value: Default + Debug + Clone,
 {
+    /// Create a new empty bucket with no entries in the table 
+    /// 
+    /// Returns a new empty `HashTable`
     pub fn new() -> Self {
         HashTable {
             buckets: Vec::new(),
@@ -21,6 +28,10 @@ where
         }
     }
 
+    /// Creates a new `HashTable` with given capacity 
+    /// 
+    /// Fills the buckets with empty `Entry` values. 
+    /// That is not taken.
     pub fn with_capacity(size: usize) -> Self {
         let mut buckets = Vec::with_capacity(size);
         for _ in 0..size{
@@ -94,14 +105,38 @@ where
         self.taken_count += 1
     }
 
+    /// Function that extends the `HashTable` by creating a new one
+    /// 
+    /// The new `HashTable` is twice the size of the original one.
     fn extend(&mut self){
-        todo!()
+        let new_size = self.table_length * 2; 
+        let mut new_table: HashTable<Key, Value> = HashTable::with_capacity(new_size);
+
+        // Iterate over all keys in the table and insert one by one
+        for entry in &self.buckets{
+            if entry.taken{
+                new_table.insert(entry.key.clone(), entry.value.clone());
+            }
+        }
+
+        *self = new_table;
     }
 
+
+    /// Delete a key value pair 
+    /// 
+    /// If the key is found, reset the values to defaults
     pub fn delete(&mut self, key: Key) {
-        todo!()
+        let index = self.find_slot(&key);
+
+        if self.buckets[index].taken{
+            self.buckets[index].taken = false;
+            self.buckets[index].key = Default::default();
+            self.buckets[index].value = Default::default();
+        }
     }
 
+    /// Print function that prints the content of the function 
     pub fn print(&self) {
         for index in 0..self.table_length {
             let entry = &self.buckets[index];
