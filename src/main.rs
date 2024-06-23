@@ -3,6 +3,7 @@ use hash_table::HashTable;
 pub mod hash_table;
 pub mod hash_table_entry;
 pub mod hash_trait;
+pub mod unit_tests;
 
 fn print_divider(){
     println!("############################ \n"); 

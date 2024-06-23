@@ -17,17 +17,6 @@ where
     Key: Default + Hash + PartialEq + Debug + Clone,
     Value: Default + Debug + Clone,
 {
-    /// Create a new empty bucket with no entries in the table 
-    /// 
-    /// Returns a new empty `HashTable`
-    pub fn new() -> Self {
-        HashTable {
-            buckets: Vec::new(),
-            taken_count: 0,
-            table_length: 0,
-        }
-    }
-
     /// Creates a new `HashTable` with given capacity 
     /// 
     /// Fills the buckets with empty `Entry` values. 
