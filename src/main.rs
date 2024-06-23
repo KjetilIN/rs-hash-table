@@ -6,7 +6,7 @@ pub mod hash_trait;
 pub mod unit_tests;
 
 fn print_divider(){
-    println!("############################ \n"); 
+    println!("\n ############################ \n"); 
 }
 
 fn print_get_result(key: String, op: Option<&String>){
@@ -19,7 +19,7 @@ fn print_get_result(key: String, op: Option<&String>){
 
 fn main() {
     // Demo of usage
-    let mut table: HashTable<String, String> = HashTable::with_capacity(10);
+    let mut table: HashTable<String, String> = HashTable::with_capacity(2);
 
     // Print the content of the hash table
     table.print();
@@ -27,9 +27,25 @@ fn main() {
     // Print divider
     print_divider();
 
-    // Inserting a value
+    // Inserting a value => this insert should also extend the capacity by double 
     table.insert("12".to_string(), "AWS".to_string());
     table.insert("11".to_string(), "Microsoft".to_string());
+    // Printing the new table content
+    table.print();
+
+    // Print divider
+    print_divider();
+
+    // Adding another value => Should not extend 
+    table.insert("10".to_string(), "Apple".to_string());
+    // Printing the new table content
+    table.print();
+
+    // Print divider
+    print_divider();
+
+    // Adding another value and this time it should extend the
+    table.insert("9".to_string(), "NVIDIA".to_string());
     // Printing the new table content
     table.print();
 
